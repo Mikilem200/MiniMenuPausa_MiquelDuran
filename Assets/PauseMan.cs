@@ -1,4 +1,8 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using System;
+using UnityEngine.InputSystem;
 
 public class PauseMan : MonoBehaviour
 {
@@ -11,7 +15,8 @@ public class PauseMan : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (isPaused)
             {

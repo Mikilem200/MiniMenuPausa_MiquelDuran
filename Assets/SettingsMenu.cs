@@ -8,12 +8,11 @@ public class SettingsMenu : MonoBehaviour
 {
     public AudioMixer audioMixer;
     public Dropdown resolutionDropdown;
-    public Dropdown qualityDropdown;
-    public Dropdown textureDropdown;
-    public Dropdown aaDropdown;
     public Slider volumeSlider;
 
-    float currentVolume;
+    float currentMusVolume;
+    float currentSFXVolume;
+
     Resolution[] resolutions;
 
     // Start is called before the first frame update
@@ -38,10 +37,16 @@ public class SettingsMenu : MonoBehaviour
         LoadSettings(currentResolutionIndex);
     }
 
-    public void SetVolume(float volume)
+    public void SetMusVolume(float volume)
     {
-        audioMixer.SetFloat("Volume", volume);
-        currentVolume = volume;
+        audioMixer.SetFloat("MusVol", volume);
+        currentMusVolume = volume;
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        audioMixer.SetFloat("SFXVol", volume);
+        currentSFXVolume = volume;
     }
 
     public void SetFullscreen(bool isFullscreen)
@@ -54,55 +59,6 @@ public class SettingsMenu : MonoBehaviour
         Resolution resolution = resolutions[resolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
-
-    public void SetTextureQuality(int textureIndex)
-    {
-        QualitySettings.globalTextureMipmapLimit = textureIndex;
-        qualityDropdown.value = 6;
-    }
-
-    public void SetAntiAliasing(int aaIndex)
-    {
-        QualitySettings.antiAliasing = aaIndex;
-        qualityDropdown.value = 6;
-    }
-
-    public void SetQuality(int qualityIndex)
-    {
-        if (qualityIndex != 6) // if the user is not using any of the presets
-            QualitySettings.SetQualityLevel(qualityIndex);
-
-        switch (qualityIndex)
-        {
-            case 0: // quality level - very low
-                textureDropdown.value = 3;
-                aaDropdown.value = 0;
-                break;
-            case 1: // quality level - low
-                textureDropdown.value = 2;
-                aaDropdown.value = 0;
-                break;
-            case 2: // quality level - medium
-                textureDropdown.value = 1;
-                aaDropdown.value = 0;
-                break;
-            case 3: // quality level - high
-                textureDropdown.value = 0;
-                aaDropdown.value = 0;
-                break;
-            case 4: // quality level - very high
-                textureDropdown.value = 0;
-                aaDropdown.value = 1;
-                break;
-            case 5: // quality level - ultra
-                textureDropdown.value = 0;
-                aaDropdown.value = 2;
-                break;
-        }
-        
-        qualityDropdown.value = qualityIndex;
-    }
-
     public void ExitGame()
     {
         Application.Quit();
@@ -110,36 +66,19 @@ public class SettingsMenu : MonoBehaviour
 
     public void SaveSettings()
     {
-        PlayerPrefs.SetInt("QualitySettingPreference", qualityDropdown.value);
         PlayerPrefs.SetInt("ResolutionPreference", resolutionDropdown.value);
-        PlayerPrefs.SetInt("TextureQualityPreference", textureDropdown.value);
-        PlayerPrefs.SetInt("AntiAliasingPreference", aaDropdown.value);
         PlayerPrefs.SetInt("FullscreenPreference", Convert.ToInt32(Screen.fullScreen));
-        PlayerPrefs.SetFloat("VolumePreference", currentVolume);
+        PlayerPrefs.SetFloat("VolumePreference", currentMusVolume);
         PlayerPrefs.Save();
     }
 
     public void LoadSettings(int currentResolutionIndex)
     {
-        if (PlayerPrefs.HasKey("QualitySettingPreference"))
-            qualityDropdown.value = PlayerPrefs.GetInt("QualitySettingPreference");
-        else
-            qualityDropdown.value = 3;
 
         if (PlayerPrefs.HasKey("ResolutionPreference"))
             resolutionDropdown.value = PlayerPrefs.GetInt("ResolutionPreference");
         else
             resolutionDropdown.value = currentResolutionIndex;
-
-        if (PlayerPrefs.HasKey("TextureQualityPreference"))
-            textureDropdown.value = PlayerPrefs.GetInt("TextureQualityPreference");
-        else
-            textureDropdown.value = 0;
-
-        if (PlayerPrefs.HasKey("AntiAliasingPreference"))
-            aaDropdown.value = PlayerPrefs.GetInt("AntiAliasingPreference");
-        else
-            aaDropdown.value = 0;
 
         if (PlayerPrefs.HasKey("FullscreenPreference"))
             Screen.fullScreen = Convert.ToBoolean(PlayerPrefs.GetInt("FullscreenPreference"));
